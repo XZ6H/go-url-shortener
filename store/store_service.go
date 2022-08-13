@@ -3,9 +3,11 @@ package store
 import (
 	"context"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/go-redis/redis/v8"
+	"github.com/joho/godotenv"
 )
 
 type StorageService struct {
@@ -20,9 +22,13 @@ var (
 const CacheDuration = 6 * time.Hour
 
 func InitializeStore() *StorageService {
+	err := godotenv.Load(".env")
+	if err != nil {
+		panic(fmt.Sprintf("Error loading .env file %v", err))
+	}
 	redisClient := redis.NewClient(&redis.Options{
-		Addr: "localhost:49153",
-		Password: "redispw",
+		Addr: os.Getenv("REDIS_ADDRESS"),
+		Password: os.Getenv("REDIS_PASSWORD"),
 		DB: 0,
 	})
 
